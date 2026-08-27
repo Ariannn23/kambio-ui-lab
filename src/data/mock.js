@@ -1,0 +1,2 @@
+export const activity = [{ icon: 'bag-handle-outline', title: 'Mercado Libre', date: 'Hoy, 14:30', amount: '-S/ 125.00', tone: '#E9EDFF' }, { icon: 'arrow-down-outline', title: 'Transferencia recibida', date: 'Ayer, 09:15 · De Juan P.', amount: '+S/ 500.00', tone: '#E2F6F1' }, { icon: 'film-outline', title: 'Netflix', date: 'Lun, 12 Sep', amount: '-S/ 34.90', tone: '#F2E9FF' }];
+export const contacts = [{ initials: 'SM', name: 'Sofía M.', color: '#5B40DE' }, { initials: 'CP', name: 'Carlos J.', color: '#86A6C4' }, { initials: 'DR', name: 'David R.', color: '#9499F7' }];

@@ -1,0 +1,23 @@
+# JavaScript dependencies and Expo caches
+node_modules/
+.expo/
+.tmp-*/
+
+# Android build outputs and local Gradle state
+android/.gradle/
+android/build/
+android/app/build/
+*.apk
+*.aab
+
+# Local IDE and operating-system files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Signing material and environment configuration
+*.keystore
+*.jks
+.env
+.env.*

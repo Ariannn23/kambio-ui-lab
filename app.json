@@ -1,0 +1,14 @@
+{
+  "expo": {
+    "name": "Kambio",
+    "slug": "kambio",
+    "version": "1.0.0",
+    "icon": "./assets/branding/kambio-app-icon.png",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "scheme": "kambio",
+    "plugins": ["expo-router"],
+    "experiments": { "typedRoutes": true },
+    "android": { "package": "com.kambio.app" }
+  }
+}
