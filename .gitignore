@@ -1,6 +1,7 @@
 # JavaScript dependencies and Expo caches
 node_modules/
 .expo/
+.expo-verify/
 .tmp-*/
 
 # Android build outputs and local Gradle state
