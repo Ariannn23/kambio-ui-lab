@@ -4,6 +4,7 @@ import Animated, { useAnimatedStyle, useSharedValue, withRepeat, withSequence, w
 import { AppBackground } from '../../components/AppBackground';
 import { AnimatedIcon } from '../../components/AnimatedIcon';
 import { KambioIcon } from '../../components/KambioIcon';
+import { KambioBottomNav } from '../../components/KambioBottomNav';
 import { COLORS, FONTS } from '../../theme';
 
 // Existing semantic names now resolve to the bold Heroicons system.
@@ -31,6 +32,7 @@ export default function UILabScreen() {
   const [slider, setSlider] = useState(42);
   const [pin, setPin] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
+  const [navPreview, setNavPreview] = useState('Resumen');
   const previewScale = useSharedValue(1);
   const previewOpacity = useSharedValue(1);
   const previewStyle = useAnimatedStyle(() => ({ transform: [{ scale: previewScale.value }], opacity: previewOpacity.value }));
@@ -108,6 +110,10 @@ export default function UILabScreen() {
 
         <LabSection number="08" title="Teclado numérico" caption="Patrón personalizado para PIN, importes o códigos.">
           <View style={styles.keypadShell}><View style={styles.pinRow}>{[0, 1, 2, 3, 4, 5].map((i) => <View key={i} style={[styles.pinDot, i < pin.length && { backgroundColor: accent.color, borderColor: accent.color }]} />)}</View><Text style={styles.pinHint}>{pin ? `${pin.length} dígitos ingresados` : 'Ingresa tu código de prueba'}</Text><NumericKeypad value={pin} onChange={setPin} accent={accent.color} /></View>
+        </LabSection>
+
+        <LabSection number="09" title="Navegación inferior" caption="Cuatro accesos principales con estado activo claro.">
+          <KambioBottomNav active={navPreview} onChange={setNavPreview} />
         </LabSection>
 
         <Text style={styles.footer}>KAMBIO UI LAB · Tokens listos para iterar</Text>
