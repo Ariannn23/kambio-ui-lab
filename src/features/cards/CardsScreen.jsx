@@ -1,6 +1,6 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { KambioIcon } from '../../components/KambioIcon';
 import { Screen } from '../../components/Screen';
 import { COLORS, FONTS } from '../../theme';
@@ -16,6 +16,9 @@ const management = [['information-circle-outline', 'Ver PIN', 'Consulta de forma
 
 export default function CardsScreen() {
   const [showAmounts, setShowAmounts] = useState(true);
+  const [activeCardIndex, setActiveCardIndex] = useState(0);
+  const { width: screenWidth } = useWindowDimensions();
+  const cardWidth = screenWidth - 40;
 
   return <Screen>
     <View style={styles.header}>
@@ -28,7 +31,17 @@ export default function CardsScreen() {
       <Text style={styles.visibilityText}>{showAmounts ? 'Ocultar montos' : 'Mostrar montos'}</Text>
     </Pressable>
 
-    {cards.map((card) => <CardBlock key={card.id} card={card} showAmounts={showAmounts} />)}
+    <ScrollView
+      horizontal
+      pagingEnabled
+      decelerationRate="fast"
+      showsHorizontalScrollIndicator={false}
+      onMomentumScrollEnd={({ nativeEvent }) => setActiveCardIndex(Math.round(nativeEvent.contentOffset.x / cardWidth))}
+      style={styles.carousel}
+    >
+      {cards.map((card) => <View key={card.id} style={{ width: cardWidth }}><CardBlock card={card} showAmounts={showAmounts} /></View>)}
+    </ScrollView>
+    <View style={styles.dots}>{cards.map((card, index) => <View key={card.id} style={[styles.dot, index === activeCardIndex && styles.dotActive]} />)}</View>
 
     <View style={styles.actions}>{actions.map(([icon, label]) => <Pressable key={label} style={({ pressed }) => [styles.action, pressed && styles.actionPressed]}><View style={styles.actionIcon}><KambioIcon name={icon} size={18} color={COLORS.blueDeep} /></View><Text style={styles.actionText}>{label}</Text></Pressable>)}</View>
 
@@ -61,7 +74,7 @@ const styles = StyleSheet.create({
   eyebrow: { color: COLORS.blue, fontFamily: FONTS.button, fontSize: 9, letterSpacing: 1.2 }, title: { marginTop: 3, color: COLORS.ink, fontFamily: FONTS.heading, fontSize: 25 },
   addButton: { width: 43, height: 43, borderRadius: 15, alignItems: 'center', justifyContent: 'center', backgroundColor: '#E8EEFF', borderWidth: 1.5, borderColor: '#FFFFFF', shadowColor: '#A2B0D0', shadowOpacity: .24, shadowRadius: 7, shadowOffset: { width: 3, height: 4 }, elevation: 3 },
   visibilityControl: { alignSelf: 'flex-start', marginTop: 16, minHeight: 38, paddingHorizontal: 13, borderRadius: 14, alignItems: 'center', flexDirection: 'row', gap: 7, backgroundColor: '#E9EFFF', borderWidth: 1, borderColor: '#FFFFFF' }, visibilityPressed: { opacity: .78, transform: [{ scale: .97 }] }, visibilityText: { color: COLORS.blueDeep, fontFamily: FONTS.button, fontSize: 10 },
-  cardBlock: { marginTop: 21 }, cardHeading: { flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 9 }, cardName: { color: COLORS.ink, fontFamily: FONTS.heading, fontSize: 17 }, balanceLabel: { marginTop: 3, color: COLORS.muted, fontFamily: FONTS.body, fontSize: 8 }, cardBalance: { color: COLORS.blueDeep, fontFamily: FONTS.bodyMedium, fontSize: 12 },
+  carousel: { marginTop: 21 }, cardBlock: { paddingRight: 1 }, cardHeading: { flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 9 }, cardName: { color: COLORS.ink, fontFamily: FONTS.heading, fontSize: 17 }, balanceLabel: { marginTop: 3, color: COLORS.muted, fontFamily: FONTS.body, fontSize: 8 }, cardBalance: { color: COLORS.blueDeep, fontFamily: FONTS.bodyMedium, fontSize: 12 }, dots: { height: 16, marginTop: 11, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 }, dot: { width: 6, height: 6, borderRadius: 3, backgroundColor: '#C9D2EA' }, dotActive: { width: 19, backgroundColor: COLORS.blueDeep },
   cardShell: { borderRadius: 26, shadowColor: '#253795', shadowOpacity: .33, shadowRadius: 15, shadowOffset: { width: 0, height: 10 }, elevation: 8 }, cardPressed: { transform: [{ scale: .985 }], opacity: .96 },
   bankCard: { height: 191, borderRadius: 26, overflow: 'hidden', padding: 20, borderWidth: 1, borderColor: 'rgba(255,255,255,.62)' }, glassOrbLarge: { position: 'absolute', width: 200, height: 200, borderRadius: 100, right: -67, top: -104, backgroundColor: 'rgba(255,255,255,.23)', borderWidth: 1, borderColor: 'rgba(255,255,255,.35)' }, glassOrbSmall: { position: 'absolute', width: 105, height: 105, borderRadius: 53, left: -40, bottom: -53, backgroundColor: 'rgba(160,205,255,.25)', borderWidth: 1, borderColor: 'rgba(255,255,255,.26)' }, glassPane: { position: 'absolute', width: 235, height: 85, right: -36, bottom: 10, borderRadius: 24, backgroundColor: 'rgba(255,255,255,.08)', borderWidth: 1, borderColor: 'rgba(255,255,255,.18)', transform: [{ rotate: '-12deg' }] },
   cardTop: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }, chip: { width: 36, height: 27, borderRadius: 8, paddingVertical: 6, justifyContent: 'space-around', backgroundColor: 'rgba(245,222,151,.93)', borderWidth: 1, borderColor: 'rgba(255,255,255,.65)' }, chipLine: { height: 1, backgroundColor: 'rgba(104,82,19,.52)' }, cardBrand: { color: 'rgba(255,255,255,.88)', fontFamily: FONTS.button, fontSize: 10, letterSpacing: 1.3 },
