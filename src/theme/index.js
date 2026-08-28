@@ -1,2 +1,2 @@
-export const COLORS = { blue: '#021DE8', wisteria: '#9499F7', periwinkle: '#C6BAF5', violet: '#5B40DE', steel: '#86A6C4', ink: '#101A4B', muted: '#66708F', surface: 'rgba(255,255,255,0.58)', line: 'rgba(255,255,255,0.72)' };
+export const COLORS = { blue: '#021DE8', blueDeep: '#1233A6', blueMid: '#3159D4', blueSoft: '#7894EE', wisteria: '#9499F7', periwinkle: '#C6BAF5', violet: '#5B40DE', steel: '#86A6C4', ink: '#101A4B', muted: '#66708F', surface: 'rgba(255,255,255,0.58)', line: 'rgba(255,255,255,0.72)' };
 export const FONTS = { title: 'RubikMonoOne_400Regular', heading: 'Outfit_700Bold', button: 'Outfit_600SemiBold', body: 'Montserrat_400Regular', bodyMedium: 'Montserrat_600SemiBold' };
