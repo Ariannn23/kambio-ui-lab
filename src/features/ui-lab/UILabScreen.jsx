@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Image, Modal, Pressable, ScrollView, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { Image, Modal, PanResponder, Pressable, ScrollView, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withRepeat, withSequence, withSpring, withTiming } from 'react-native-reanimated';
 import { AppBackground } from '../../components/AppBackground';
 import { AnimatedIcon } from '../../components/AnimatedIcon';
@@ -134,19 +134,30 @@ function MotionItem({ icon, title, copy }) { return <View style={styles.motionIt
 function ComponentState({ icon, title, caption, success, muted }) { return <View style={[styles.componentState, muted && styles.componentMuted]}><Ionicons name={icon} size={20} color={success ? '#07956D' : muted ? '#A8B0C7' : COLORS.violet} /><Text style={styles.stateTitle}>{title}</Text><Text style={styles.stateCaption}>{caption}</Text></View>; }
 function Skeleton({ width, height, round = false }) { const shimmer = useSharedValue(-1); useEffect(() => { shimmer.value = withRepeat(withTiming(1, { duration: 1150 }), -1, false); }, [shimmer]); const animated = useAnimatedStyle(() => ({ opacity: 0.38 + shimmer.value * 0.38 })); return <Animated.View style={[styles.skeleton, { width, height, borderRadius: round ? height / 2 : 6 }, animated]} />; }
 function RangeSlider({ value, onChange, accent }) {
-  const [width, setWidth] = useState(0);
   const progress = useSharedValue(value);
   const trackWidth = useSharedValue(0);
-  useEffect(() => { progress.value = withTiming(value, { duration: 120 }); }, [progress, value]);
+  const widthRef = useRef(0);
+  const draggingRef = useRef(false);
+  const latestValueRef = useRef(value);
+  useEffect(() => { if (!draggingRef.current) progress.value = withTiming(value, { duration: 120 }); }, [progress, value]);
   const fillStyle = useAnimatedStyle(() => ({ width: `${progress.value}%` }));
   const thumbStyle = useAnimatedStyle(() => ({ left: Math.max(0, trackWidth.value * progress.value / 100 - 12) }));
-  const update = (event, commit = false) => {
-    if (!width) return;
-    const next = Math.max(0, Math.min(100, Math.round(event.nativeEvent.locationX / width * 100)));
+  const update = (event) => {
+    if (!widthRef.current) return;
+    const next = Math.max(0, Math.min(100, Math.round(event.nativeEvent.locationX / widthRef.current * 100)));
     progress.value = next;
-    if (commit) onChange(next);
+    latestValueRef.current = next;
   };
-  return <View><View onLayout={(event) => { const nextWidth = event.nativeEvent.layout.width; setWidth(nextWidth); trackWidth.value = nextWidth; }} onStartShouldSetResponderCapture={() => true} onMoveShouldSetResponderCapture={() => true} onResponderTerminationRequest={() => false} onResponderGrant={(event) => update(event)} onResponderMove={(event) => update(event)} onResponderRelease={(event) => update(event, true)} onResponderTerminate={(event) => update(event, true)} style={styles.rangeTouch}><View pointerEvents="none" style={styles.rangeTrack}><Animated.View style={[styles.rangeFill, { backgroundColor: accent }, fillStyle]} /><Animated.View style={[styles.rangeThumb, { borderColor: accent }, thumbStyle]} /></View></View><View style={styles.rangeLabels}><Text style={styles.rangeLabel}>Suave</Text><Text style={[styles.rangeValue, { color: accent }]}>{value}%</Text><Text style={styles.rangeLabel}>Intenso</Text></View></View>;
+  const panResponder = useRef(PanResponder.create({
+    onStartShouldSetPanResponder: () => true,
+    onMoveShouldSetPanResponder: () => true,
+    onPanResponderTerminationRequest: () => false,
+    onPanResponderGrant: (event) => { draggingRef.current = true; update(event); },
+    onPanResponderMove: (event) => update(event),
+    onPanResponderRelease: () => { draggingRef.current = false; onChange(latestValueRef.current); },
+    onPanResponderTerminate: () => { draggingRef.current = false; onChange(latestValueRef.current); },
+  })).current;
+  return <View><View onLayout={(event) => { const nextWidth = event.nativeEvent.layout.width; widthRef.current = nextWidth; trackWidth.value = nextWidth; }} {...panResponder.panHandlers} style={styles.rangeTouch}><View pointerEvents="none" style={styles.rangeTrack}><Animated.View style={[styles.rangeFill, { backgroundColor: accent }, fillStyle]} /><Animated.View style={[styles.rangeThumb, { borderColor: accent }, thumbStyle]} /></View></View><View style={styles.rangeLabels}><Text style={styles.rangeLabel}>Suave</Text><Text style={[styles.rangeValue, { color: accent }]}>{value}%</Text><Text style={styles.rangeLabel}>Intenso</Text></View></View>;
 }
 function NumericKeypad({ value, onChange, accent }) { const press = (key) => { if (key === 'backspace-outline') onChange(value.slice(0, -1)); else if (key !== 'scan-circle-outline' && value.length < 6) onChange(`${value}${key}`); }; const keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'scan-circle-outline', '0', 'backspace-outline']; return <View style={styles.keypad}>{keys.map((key) => <Pressable key={key} onPress={() => press(key)} style={({ pressed }) => [styles.key, pressed && { backgroundColor: `${accent}16` }]}>{key === 'scan-circle-outline' || key === 'backspace-outline' ? <Ionicons name={key} color={accent} size={20} /> : <Text style={styles.keyText}>{key}</Text>}</Pressable>)}</View>; }
 
