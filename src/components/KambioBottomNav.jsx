@@ -20,7 +20,7 @@ export function KambioBottomNav({ active = 'Resumen', onChange = () => undefined
   const usableWidth = width - (ROW_HORIZONTAL_PADDING * 2);
   const center = ROW_HORIZONTAL_PADDING + ((usableWidth / items.length) * (activeIndex + .5));
   const navCenter = useSharedValue(center);
-  const bubbleStyle = useAnimatedStyle(() => ({ transform: [{ translateX: navCenter.value - 32 }] }));
+  const bubbleStyle = useAnimatedStyle(() => ({ transform: [{ translateX: navCenter.value - 33 }] }));
   const pathProps = useAnimatedProps(() => ({ d: navPath(width, navCenter.value) }));
 
   useEffect(() => {
@@ -31,7 +31,7 @@ export function KambioBottomNav({ active = 'Resumen', onChange = () => undefined
 
   return <View style={styles.frame} onLayout={(event) => setWidth(event.nativeEvent.layout.width)}>
     <Svg pointerEvents="none" width={width} height={106} style={styles.surface}>
-      <AnimatedPath animatedProps={pathProps} fill="#FFFFFF" stroke="#FFFFFF" strokeWidth={2} />
+      <AnimatedPath animatedProps={pathProps} fill="#FFFFFF" />
     </Svg>
     <View style={styles.row}>
       {items.map((item) => <NavItem key={item.key} item={item} active={active === item.key} onPress={() => onChange(item.key)} />)}
@@ -42,9 +42,9 @@ export function KambioBottomNav({ active = 'Resumen', onChange = () => undefined
 
 function navPath(width, center) {
   'worklet';
-  const notchStart = Math.max(40, center - 43);
-  const notchEnd = Math.min(width - 40, center + 43);
-  return `M 0 55 Q 0 31 22 31 H ${notchStart} C ${center - 33} 31, ${center - 29} 61, ${center} 61 C ${center + 29} 61, ${center + 33} 31, ${notchEnd} 31 H ${width - 22} Q ${width} 31 ${width} 55 V 82 Q ${width} 104 ${width - 22} 104 H 22 Q 0 104 0 82 Z`;
+  const notchStart = Math.max(44, center - 47);
+  const notchEnd = Math.min(width - 44, center + 47);
+  return `M 0 55 Q 0 31 22 31 H ${notchStart} C ${center - 39} 31, ${center - 36} 72, ${center} 72 C ${center + 36} 72, ${center + 39} 31, ${notchEnd} 31 H ${width - 22} Q ${width} 31 ${width} 55 V 82 Q ${width} 104 ${width - 22} 104 H 22 Q 0 104 0 82 Z`;
 }
 
 function NavItem({ item, active, onPress }) {
@@ -82,9 +82,9 @@ const styles = StyleSheet.create({
   row: { flexDirection: 'row', height: 106, paddingHorizontal: ROW_HORIZONTAL_PADDING, zIndex: 2 },
   item: { flex: 1, minWidth: 0, height: 106, alignItems: 'center', position: 'relative' },
   activeBubble: {
-    position: 'absolute', top: 0, left: 0, width: 64, height: 64, borderRadius: 32,
-    alignItems: 'center', justifyContent: 'center', backgroundColor: '#FFFFFF', borderWidth: 5, borderColor: '#F3F6FD',
-    shadowColor: '#6678A6', shadowOpacity: .2, shadowRadius: 8, shadowOffset: { width: 0, height: 4 }, elevation: 5, zIndex: 1,
+    position: 'absolute', top: -2, left: 0, width: 66, height: 66, borderRadius: 33,
+    alignItems: 'center', justifyContent: 'center', backgroundColor: '#FFFFFF', borderWidth: 4, borderColor: '#EEF2FB',
+    shadowColor: '#6678A6', shadowOpacity: .12, shadowRadius: 7, shadowOffset: { width: 0, height: 2 }, elevation: 3, zIndex: 1,
   },
   regularIcon: { position: 'absolute', top: 40, width: 34, height: 25, alignItems: 'center', justifyContent: 'center' },
   label: { position: 'absolute', top: 75, color: '#6D7894', fontFamily: FONTS.button, fontSize: 10, lineHeight: 13, textAlign: 'center' },
