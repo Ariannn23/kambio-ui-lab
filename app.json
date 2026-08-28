@@ -7,7 +7,7 @@
     "orientation": "portrait",
     "userInterfaceStyle": "light",
     "scheme": "kambio",
-    "plugins": ["expo-router"],
+    "plugins": ["expo-router", "expo-local-authentication"],
     "experiments": { "typedRoutes": true },
     "android": { "package": "com.kambio.app" }
   }
