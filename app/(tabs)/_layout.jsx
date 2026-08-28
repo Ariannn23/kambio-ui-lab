@@ -19,13 +19,11 @@ export default function TabsLayout() {
 function KambioTabBar({ state, navigation }) {
   const active = state.routes[state.index]?.name || 'account';
   return <View style={styles.shell}>
-    <View pointerEvents="none" style={styles.notchBackdrop} />
     <KambioBottomNav active={active} onChange={(target) => navigation.navigate(target)} />
   </View>;
 }
 
 const styles = StyleSheet.create({
   scene: { backgroundColor: '#F0F5FF' },
-  shell: { width: '100%', paddingBottom: 2, position: 'relative', backgroundColor: 'transparent' },
-  notchBackdrop: { position: 'absolute', top: 32, right: 0, bottom: 0, left: 0, backgroundColor: '#F0F5FF' },
+  shell: { position: 'absolute', right: 0, bottom: 0, left: 0, width: '100%', paddingBottom: 2, backgroundColor: 'transparent' },
 });
