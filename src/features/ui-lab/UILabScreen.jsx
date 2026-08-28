@@ -112,7 +112,7 @@ export default function UILabScreen() {
           <View style={styles.keypadShell}><View style={styles.pinRow}>{[0, 1, 2, 3, 4, 5].map((i) => <View key={i} style={[styles.pinDot, i < pin.length && { backgroundColor: accent.color, borderColor: accent.color }]} />)}</View><Text style={styles.pinHint}>{pin ? `${pin.length} dígitos ingresados` : 'Ingresa tu código de prueba'}</Text><NumericKeypad value={pin} onChange={setPin} accent={accent.color} /></View>
         </LabSection>
 
-        <LabSection number="09" title="Navegación inferior" caption="Cuatro accesos principales con estado activo claro.">
+        <LabSection number="09" title="Navegación inferior" caption="Estado activo elevado, microinteracción y acceso táctil claro.">
           <KambioBottomNav active={navPreview} onChange={setNavPreview} />
         </LabSection>
 
