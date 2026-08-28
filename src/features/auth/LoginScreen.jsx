@@ -2,6 +2,7 @@ import * as LocalAuthentication from 'expo-local-authentication';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { KeyboardAvoidingView, Modal, Platform, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withRepeat, withSequence, withTiming } from 'react-native-reanimated';
 import { AppBackground } from '../../components/AppBackground';
 import { KambioIcon } from '../../components/KambioIcon';
 import { COLORS, FONTS } from '../../theme';
@@ -37,6 +38,7 @@ export default function LoginScreen() {
       <KeyboardAvoidingView style={styles.safe} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView contentContainerStyle={styles.scroll} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
           <View style={styles.hero}>
+            <HeroAmbient />
             <View style={styles.heroTop}>
               <Pressable accessibilityRole="button" accessibilityLabel="Ayuda para iniciar sesión" onPress={() => setHelpOpen(true)} style={({ pressed }) => [styles.helpButton, pressed && styles.pressed]}><KambioIcon name="help-circle-outline" size={22} color="white" /></Pressable>
             </View>
@@ -69,11 +71,21 @@ export default function LoginScreen() {
   </AppBackground>;
 }
 
+function HeroAmbient() {
+  const drift = useSharedValue(0);
+  useEffect(() => {
+    drift.value = withRepeat(withSequence(withTiming(1, { duration: 3600 }), withTiming(0, { duration: 3600 })), -1, true);
+  }, [drift]);
+  const primaryStyle = useAnimatedStyle(() => ({ transform: [{ translateX: drift.value * 22 }, { translateY: drift.value * -15 }, { scale: 1 + drift.value * .06 }] }));
+  const secondaryStyle = useAnimatedStyle(() => ({ transform: [{ translateX: drift.value * -16 }, { translateY: drift.value * 12 }, { scale: 1.04 - drift.value * .05 }] }));
+  return <><Animated.View pointerEvents="none" style={[styles.ambientOrbPrimary, primaryStyle]} /><Animated.View pointerEvents="none" style={[styles.ambientOrbSecondary, secondaryStyle]} /></>;
+}
+
 const styles = StyleSheet.create({
   safe: { flex: 1 }, scroll: { flexGrow: 1, paddingBottom: 28 },
-  hero: { minHeight: 320, paddingHorizontal: 24, paddingTop: 15, backgroundColor: COLORS.blueDeep, borderBottomLeftRadius: 42, borderBottomRightRadius: 42, shadowColor: COLORS.blueDeep, shadowOpacity: .3, shadowRadius: 17, shadowOffset: { width: 0, height: 8 }, elevation: 7 },
-  heroTop: { flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center' }, helpButton: { width: 43, height: 43, alignItems: 'center', justifyContent: 'center', borderRadius: 15, backgroundColor: 'rgba(255,255,255,.16)', borderWidth: 1, borderColor: 'rgba(255,255,255,.48)' },
-  heroMessage: { marginTop: 30 }, eyebrow: { color: '#BFD0FF', fontFamily: FONTS.button, fontSize: 9, letterSpacing: 1.1 }, heroTitle: { marginTop: 11, color: 'white', fontFamily: FONTS.heading, fontSize: 30, lineHeight: 35 }, heroCopy: { marginTop: 9, color: '#D7E2FF', fontFamily: FONTS.body, fontSize: 11, lineHeight: 17 },
+  hero: { minHeight: 320, paddingHorizontal: 24, paddingTop: 15, overflow: 'hidden', backgroundColor: COLORS.blueDeep, borderBottomLeftRadius: 42, borderBottomRightRadius: 42, shadowColor: COLORS.blueDeep, shadowOpacity: .3, shadowRadius: 17, shadowOffset: { width: 0, height: 8 }, elevation: 7 }, ambientOrbPrimary: { position: 'absolute', width: 245, height: 245, borderRadius: 123, right: -92, top: 34, backgroundColor: 'rgba(120,148,238,.22)', borderWidth: 1, borderColor: 'rgba(210,222,255,.18)' }, ambientOrbSecondary: { position: 'absolute', width: 138, height: 138, borderRadius: 69, left: -72, bottom: -36, backgroundColor: 'rgba(81,119,222,.28)', borderWidth: 1, borderColor: 'rgba(219,229,255,.14)' },
+  heroTop: { zIndex: 1, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center' }, helpButton: { width: 43, height: 43, alignItems: 'center', justifyContent: 'center', borderRadius: 15, backgroundColor: 'rgba(255,255,255,.16)', borderWidth: 1, borderColor: 'rgba(255,255,255,.48)' },
+  heroMessage: { zIndex: 1, marginTop: 30 }, eyebrow: { color: '#BFD0FF', fontFamily: FONTS.button, fontSize: 9, letterSpacing: 1.1 }, heroTitle: { marginTop: 11, color: 'white', fontFamily: FONTS.heading, fontSize: 30, lineHeight: 35 }, heroCopy: { marginTop: 9, color: '#D7E2FF', fontFamily: FONTS.body, fontSize: 11, lineHeight: 17 },
   sheet: { flex: 1, marginTop: -58, paddingHorizontal: 24, paddingTop: 13, paddingBottom: 28, borderTopLeftRadius: 34, borderTopRightRadius: 34, backgroundColor: '#F5F7FF', borderWidth: 1.5, borderColor: '#FFFFFF', shadowColor: '#93A3CF', shadowOpacity: .35, shadowRadius: 16, shadowOffset: { width: 0, height: -3 }, elevation: 9 }, sheetHandle: { alignSelf: 'center', width: 40, height: 5, borderRadius: 3, backgroundColor: '#CCD5EE' }, sheetTitle: { marginTop: 22, color: COLORS.ink, fontFamily: FONTS.heading, fontSize: 26 }, sheetCopy: { marginTop: 6, color: COLORS.muted, fontFamily: FONTS.body, fontSize: 12 },
   fieldGroup: { marginTop: 23 }, label: { color: COLORS.ink, fontFamily: FONTS.button, fontSize: 11, letterSpacing: .75 }, pinLabelRow: { flexDirection: 'row', justifyContent: 'space-between' }, pinStatus: { color: COLORS.violet, fontFamily: FONTS.button, fontSize: 10 }, field: { width: '100%', height: 56, marginTop: 10, paddingHorizontal: 17, flexDirection: 'row', alignItems: 'center', gap: 11, borderRadius: 18, backgroundColor: '#EAF0FF', borderWidth: 1.5, borderColor: '#D7E0F5' }, fieldComplete: { borderColor: '#91A1F1', backgroundColor: '#E5ECFF' }, input: { flex: 1, height: '100%', color: COLORS.ink, fontFamily: FONTS.bodyMedium, fontSize: 15 }, fieldHint: { marginTop: 7, color: COLORS.muted, fontFamily: FONTS.body, fontSize: 10 },
   loginButton: { height: 62, marginTop: 29, borderRadius: 19, paddingHorizontal: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, backgroundColor: COLORS.blue, borderWidth: 1, borderColor: '#FFFFFF', shadowColor: '#021DE8', shadowOpacity: .34, shadowRadius: 10, shadowOffset: { width: 4, height: 6 }, elevation: 6 }, loginDisabled: { backgroundColor: '#9EA8D5', shadowOpacity: .1 }, loginText: { color: 'white', fontFamily: FONTS.button, fontSize: 16 }, recoveryButton: { alignSelf: 'center', paddingVertical: 18 }, recoveryText: { color: COLORS.blue, fontFamily: FONTS.button, fontSize: 13 },
