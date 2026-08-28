@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import Animated, { useAnimatedProps, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
+import Animated, { Easing, useAnimatedProps, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
 import Svg, { Path } from 'react-native-svg';
 import { KambioIcon } from './KambioIcon';
 import { COLORS, FONTS } from '../theme';
@@ -22,7 +22,9 @@ export function KambioBottomNav({ active = 'Resumen', onChange = () => undefined
   const pathProps = useAnimatedProps(() => ({ d: navPath(width, navCenter.value) }));
 
   useEffect(() => {
-    navCenter.value = withSpring(center, { damping: 20, stiffness: 155, mass: .78 });
+    // Both the elevated control and its concave track use navCenter, so a jump
+    // across multiple tabs still travels through every intermediate position.
+    navCenter.value = withTiming(center, { duration: 520, easing: Easing.bezier(.22, .76, .28, 1) });
   }, [center, navCenter]);
 
   return <View style={styles.frame} onLayout={(event) => setWidth(event.nativeEvent.layout.width)}>
