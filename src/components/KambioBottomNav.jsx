@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
+import Animated, { useAnimatedProps, useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import Svg, { Path } from 'react-native-svg';
 import { KambioIcon } from './KambioIcon';
 import { COLORS, FONTS } from '../theme';
@@ -11,21 +11,23 @@ const items = [
   { key: 'Estadísticas', label: 'Estadísticas', icon: 'stats-chart-outline' },
   { key: 'Perfil', label: 'Perfil', icon: 'person-outline' },
 ];
+const AnimatedPath = Animated.createAnimatedComponent(Path);
 
 export function KambioBottomNav({ active = 'Resumen', onChange = () => undefined }) {
   const [width, setWidth] = useState(360);
   const activeIndex = Math.max(0, items.findIndex((item) => item.key === active));
   const center = (width / items.length) * (activeIndex + .5);
-  const bubbleX = useSharedValue(center - 32);
-  const bubbleStyle = useAnimatedStyle(() => ({ transform: [{ translateX: bubbleX.value }] }));
+  const navCenter = useSharedValue(center);
+  const bubbleStyle = useAnimatedStyle(() => ({ transform: [{ translateX: navCenter.value - 32 }] }));
+  const pathProps = useAnimatedProps(() => ({ d: navPath(width, navCenter.value) }));
 
   useEffect(() => {
-    bubbleX.value = withSpring(center - 32, { damping: 18, stiffness: 145, mass: .72 });
-  }, [bubbleX, center]);
+    navCenter.value = withSpring(center, { damping: 20, stiffness: 155, mass: .78 });
+  }, [center, navCenter]);
 
   return <View style={styles.frame} onLayout={(event) => setWidth(event.nativeEvent.layout.width)}>
     <Svg pointerEvents="none" width={width} height={106} style={styles.surface}>
-      <Path d={navPath(width, center)} fill="#FFFFFF" stroke="#FFFFFF" strokeWidth={2} />
+      <AnimatedPath animatedProps={pathProps} fill="#FFFFFF" stroke="#FFFFFF" strokeWidth={2} />
     </Svg>
     <View style={styles.row}>
       {items.map((item) => <NavItem key={item.key} item={item} active={active === item.key} onPress={() => onChange(item.key)} />)}
@@ -37,6 +39,7 @@ export function KambioBottomNav({ active = 'Resumen', onChange = () => undefined
 }
 
 function navPath(width, center) {
+  'worklet';
   const notchStart = Math.max(40, center - 43);
   const notchEnd = Math.min(width - 40, center + 43);
   return `M 0 55 Q 0 31 22 31 H ${notchStart} C ${center - 33} 31, ${center - 29} 61, ${center} 61 C ${center + 29} 61, ${center + 33} 31, ${notchEnd} 31 H ${width - 22} Q ${width} 31 ${width} 55 V 82 Q ${width} 104 ${width - 22} 104 H 22 Q 0 104 0 82 Z`;
