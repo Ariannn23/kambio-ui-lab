@@ -4,7 +4,7 @@ import { KambioBottomNav } from '../../src/components/KambioBottomNav';
 
 export default function TabsLayout() {
   return <Tabs
-    screenOptions={{ headerShown: false, animation: 'fade' }}
+    screenOptions={{ headerShown: false, animation: 'fade', sceneStyle: styles.scene }}
     tabBar={(props) => <KambioTabBar {...props} />}
   >
     <Tabs.Screen name="account" options={{ title: 'Inicio' }} />
@@ -24,5 +24,6 @@ function KambioTabBar({ state, navigation }) {
 }
 
 const styles = StyleSheet.create({
-  shell: { paddingHorizontal: 12, paddingBottom: 2, backgroundColor: 'transparent' },
+  scene: { backgroundColor: '#F0F5FF' },
+  shell: { width: '100%', paddingBottom: 2, backgroundColor: '#F0F5FF' },
 });
