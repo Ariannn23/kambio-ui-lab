@@ -21,7 +21,7 @@ export default function LoginScreen() {
       const enrolled = hasHardware && await LocalAuthentication.isEnrolledAsync();
       if (!enrolled) return setNotice('No hay biometría configurada en este dispositivo');
       const result = await LocalAuthentication.authenticateAsync({ promptMessage: 'Acceder a Kambio', cancelLabel: 'Usar clave', disableDeviceFallback: false });
-      if (result.success) router.replace('/ui-lab');
+      if (result.success) router.replace('/account');
       else setNotice('Usa tu DNI y clave para ingresar');
     } catch {
       setNotice('No pudimos iniciar la biometría. Usa tu clave.');
@@ -30,7 +30,7 @@ export default function LoginScreen() {
 
   const submit = () => {
     if (!ready) return setNotice('Completa tu DNI y los 6 dígitos de tu clave');
-    router.replace('/ui-lab');
+    router.replace('/account');
   };
 
   return <AppBackground>

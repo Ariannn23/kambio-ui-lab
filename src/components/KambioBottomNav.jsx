@@ -6,15 +6,16 @@ import { KambioIcon } from './KambioIcon';
 import { COLORS, FONTS } from '../theme';
 
 const items = [
-  { key: 'Resumen', label: 'Inicio', icon: 'wallet-outline' },
-  { key: 'Transferir', label: 'Transferir', icon: 'swap-horizontal-outline' },
-  { key: 'Estadísticas', label: 'Estadísticas', icon: 'stats-chart-outline' },
-  { key: 'Perfil', label: 'Perfil', icon: 'person-outline' },
+  { key: 'account', label: 'Inicio', icon: 'wallet-outline' },
+  { key: 'transfers', label: 'Transferir', icon: 'swap-horizontal-outline' },
+  { key: 'cards', label: 'Tarjetas', icon: 'card-outline' },
+  { key: 'profile', label: 'Perfil', icon: 'person-outline' },
+  { key: 'lab', label: 'UI Lab', icon: 'layers-outline' },
 ];
 const AnimatedPath = Animated.createAnimatedComponent(Path);
 const ROW_HORIZONTAL_PADDING = 8;
 
-export function KambioBottomNav({ active = 'Resumen', onChange = () => undefined }) {
+export function KambioBottomNav({ active = 'account', onChange = () => undefined }) {
   const [width, setWidth] = useState(360);
   const activeIndex = Math.max(0, items.findIndex((item) => item.key === active));
   const usableWidth = width - (ROW_HORIZONTAL_PADDING * 2);
@@ -89,6 +90,6 @@ const styles = StyleSheet.create({
     shadowColor: '#6678A6', shadowOpacity: .12, shadowRadius: 7, shadowOffset: { width: 0, height: 2 }, elevation: 3, zIndex: 1,
   },
   regularIcon: { position: 'absolute', top: 40, width: 34, height: 25, alignItems: 'center', justifyContent: 'center' },
-  label: { position: 'absolute', top: 75, color: '#6D7894', fontFamily: FONTS.button, fontSize: 10, lineHeight: 13, textAlign: 'center' },
-  labelActive: { color: COLORS.ink, fontFamily: FONTS.heading, fontSize: 10 },
+  label: { position: 'absolute', top: 75, width: '100%', color: '#6D7894', fontFamily: FONTS.button, fontSize: 8.5, lineHeight: 12, textAlign: 'center' },
+  labelActive: { color: COLORS.ink, fontFamily: FONTS.heading, fontSize: 8.5 },
 });

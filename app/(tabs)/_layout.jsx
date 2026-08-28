@@ -1,22 +1,28 @@
 import { Tabs } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
-import { COLORS } from '../../src/theme';
-import { AnimatedIcon } from '../../src/components/AnimatedIcon';
-
-const icons = { account: ['wallet-outline', 'wallet'], transfers: ['swap-horizontal-outline', 'swap-horizontal'], stats: ['stats-chart-outline', 'stats-chart'], profile: ['person-outline', 'person'] };
+import { KambioBottomNav } from '../../src/components/KambioBottomNav';
 
 export default function TabsLayout() {
-  return <Tabs screenOptions={({ route }) => ({ headerShown: false, tabBarActiveTintColor: COLORS.blue, tabBarInactiveTintColor: '#7B8197', tabBarStyle: styles.bar, tabBarItemStyle: styles.item, tabBarLabelStyle: styles.label, tabBarIconStyle: styles.icon, tabBarIcon: ({ focused, color, size }) => <TabIcon focused={focused} color={color} size={size} name={icons[route.name][focused ? 1 : 0]} /> })}>
-    <Tabs.Screen name="account" options={{ title: 'Cuenta' }} />
+  return <Tabs
+    screenOptions={{ headerShown: false, animation: 'fade' }}
+    tabBar={(props) => <KambioTabBar {...props} />}
+  >
+    <Tabs.Screen name="account" options={{ title: 'Inicio' }} />
     <Tabs.Screen name="transfers" options={{ title: 'Transferir' }} />
-    <Tabs.Screen name="stats" options={{ title: 'Estadísticas' }} />
+    <Tabs.Screen name="cards" options={{ title: 'Tarjetas' }} />
     <Tabs.Screen name="profile" options={{ title: 'Perfil' }} />
+    <Tabs.Screen name="lab" options={{ title: 'UI Lab' }} />
+    <Tabs.Screen name="stats" options={{ href: null }} />
   </Tabs>;
 }
 
-function TabIcon({ focused, color, size, name }) { return <View style={[styles.iconBubble, focused && styles.iconBubbleActive]}><AnimatedIcon name={name} color={color} size={size - 1} active={focused} motion={name.includes('swap') ? 'swap' : 'float'} /></View>; }
+function KambioTabBar({ state, navigation }) {
+  const active = state.routes[state.index]?.name || 'account';
+  return <View style={styles.shell}>
+    <KambioBottomNav active={active} onChange={(target) => navigation.navigate(target)} />
+  </View>;
+}
 
 const styles = StyleSheet.create({
-  bar: { position: 'absolute', left: 13, right: 13, bottom: 10, height: 70, paddingTop: 7, borderTopWidth: 0, borderRadius: 23, backgroundColor: 'rgba(255,255,255,.98)', shadowColor: '#5261A5', shadowOpacity: .16, shadowRadius: 16, shadowOffset: { width: 0, height: 6 }, elevation: 9 },
-  item: { paddingTop: 0 }, label: { fontFamily: 'Outfit_600SemiBold', fontSize: 9, marginTop: -1 }, icon: { marginTop: 0 }, iconBubble: { width: 34, height: 30, borderRadius: 12, alignItems: 'center', justifyContent: 'center' }, iconBubbleActive: { backgroundColor: '#E4E9FF' },
+  shell: { paddingHorizontal: 12, paddingBottom: 2, backgroundColor: 'transparent' },
 });
