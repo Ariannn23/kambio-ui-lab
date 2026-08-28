@@ -42,9 +42,11 @@ export function KambioBottomNav({ active = 'Resumen', onChange = () => undefined
 
 function navPath(width, center) {
   'worklet';
-  const notchStart = Math.max(44, center - 47);
-  const notchEnd = Math.min(width - 44, center + 47);
-  return `M 0 55 Q 0 31 22 31 H ${notchStart} C ${center - 39} 31, ${center - 36} 72, ${center} 72 C ${center + 36} 72, ${center + 39} 31, ${notchEnd} 31 H ${width - 22} Q ${width} 31 ${width} 55 V 82 Q ${width} 104 ${width - 22} 104 H 22 Q 0 104 0 82 Z`;
+  const notchStart = Math.max(4, center - 47);
+  const notchEnd = Math.min(width - 4, center + 47);
+  const leftCornerEnd = Math.min(22, notchStart);
+  const rightCornerStart = Math.max(width - 22, notchEnd);
+  return `M 0 55 Q 0 31 ${leftCornerEnd} 31 H ${notchStart} C ${center - 39} 31, ${center - 36} 72, ${center} 72 C ${center + 36} 72, ${center + 39} 31, ${notchEnd} 31 H ${rightCornerStart} Q ${width} 31 ${width} 55 V 82 Q ${width} 104 ${width - 22} 104 H 22 Q 0 104 0 82 Z`;
 }
 
 function NavItem({ item, active, onPress }) {
@@ -83,7 +85,7 @@ const styles = StyleSheet.create({
   item: { flex: 1, minWidth: 0, height: 106, alignItems: 'center', position: 'relative' },
   activeBubble: {
     position: 'absolute', top: -2, left: 0, width: 66, height: 66, borderRadius: 33,
-    alignItems: 'center', justifyContent: 'center', backgroundColor: '#FFFFFF', borderWidth: 4, borderColor: '#EEF2FB',
+    alignItems: 'center', justifyContent: 'center', backgroundColor: '#FFFFFF', borderWidth: 2, borderColor: '#F4F6FC',
     shadowColor: '#6678A6', shadowOpacity: .12, shadowRadius: 7, shadowOffset: { width: 0, height: 2 }, elevation: 3, zIndex: 1,
   },
   regularIcon: { position: 'absolute', top: 40, width: 34, height: 25, alignItems: 'center', justifyContent: 'center' },
