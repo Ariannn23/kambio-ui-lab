@@ -1,12 +1,72 @@
-import { Ionicons } from '@expo/vector-icons';
+import {
+  ArrowRightIcon,
+  ArrowsRightLeftIcon,
+  BackspaceIcon,
+  Bars3Icon,
+  BellIcon,
+  BoltIcon,
+  ChartBarIcon,
+  CheckCircleIcon,
+  CheckIcon,
+  ChevronDownIcon,
+  ChevronRightIcon,
+  ClockIcon,
+  CreditCardIcon,
+  HeartIcon,
+  InformationCircleIcon,
+  LockClosedIcon,
+  MagnifyingGlassIcon,
+  PaperAirplaneIcon,
+  PencilIcon,
+  PlayIcon,
+  PlusIcon,
+  QrCodeIcon,
+  QuestionMarkCircleIcon,
+  ShieldCheckIcon,
+  SparklesIcon,
+  Squares2X2Icon,
+  UserIcon,
+  WalletIcon,
+} from 'react-native-heroicons/solid';
 
-// Kept behind one component so the visual library can be swapped safely.
-export function KambioIcon({ name, color, size = 22, active = false }) {
-  const activeNames = {
-    'wallet-outline': 'wallet',
-    'swap-horizontal-outline': 'swap-horizontal',
-    'stats-chart-outline': 'stats-chart',
-    'person-outline': 'person',
-  };
-  return <Ionicons name={active ? (activeNames[name] || name) : name} color={color} size={size} />;
+// Unified, deliberately bold icon vocabulary for the KAMBIO design system.
+const icons = {
+  add: PlusIcon,
+  'add-outline': PlusIcon,
+  'arrow-forward': ArrowRightIcon,
+  'backspace-outline': BackspaceIcon,
+  'card-outline': CreditCardIcon,
+  checkmark: CheckIcon,
+  'checkmark-circle-outline': CheckCircleIcon,
+  'chevron-down': ChevronDownIcon,
+  'chevron-forward': ChevronRightIcon,
+  'flash-outline': BoltIcon,
+  'git-compare-outline': ArrowsRightLeftIcon,
+  'heart-outline': HeartIcon,
+  'hourglass-outline': ClockIcon,
+  'information-circle-outline': InformationCircleIcon,
+  'layers-outline': Squares2X2Icon,
+  'lock-closed-outline': LockClosedIcon,
+  'menu-outline': Bars3Icon,
+  'notifications-outline': BellIcon,
+  pencil: PencilIcon,
+  person: UserIcon,
+  'person-outline': UserIcon,
+  play: PlayIcon,
+  'scan-circle-outline': QrCodeIcon,
+  'scan-outline': QrCodeIcon,
+  'search-outline': MagnifyingGlassIcon,
+  'send-outline': PaperAirplaneIcon,
+  'shield-checkmark-outline': ShieldCheckIcon,
+  'sparkles-outline': SparklesIcon,
+  'stats-chart-outline': ChartBarIcon,
+  'swap-horizontal': ArrowsRightLeftIcon,
+  'swap-horizontal-outline': ArrowsRightLeftIcon,
+  wallet: WalletIcon,
+  'wallet-outline': WalletIcon,
+};
+
+export function KambioIcon({ name, color, size = 22 }) {
+  const Icon = icons[name] || QuestionMarkCircleIcon;
+  return <Icon color={color} size={size} />;
 }
