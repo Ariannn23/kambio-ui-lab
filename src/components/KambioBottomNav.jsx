@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import Animated, { Easing, runOnJS, useAnimatedProps, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
+import Animated, { Easing, useAnimatedProps, useAnimatedStyle, useSharedValue, withDelay, withSpring, withTiming } from 'react-native-reanimated';
 import Svg, { Path } from 'react-native-svg';
 import { KambioIcon } from './KambioIcon';
 import { COLORS, FONTS } from '../theme';
@@ -16,28 +16,16 @@ const AnimatedPath = Animated.createAnimatedComponent(Path);
 export function KambioBottomNav({ active = 'Resumen', onChange = () => undefined }) {
   const [width, setWidth] = useState(360);
   const activeIndex = Math.max(0, items.findIndex((item) => item.key === active));
-  const [bubbleIconIndex, setBubbleIconIndex] = useState(activeIndex);
   const center = (width / items.length) * (activeIndex + .5);
   const navCenter = useSharedValue(center);
-  const iconOpacity = useSharedValue(1);
   const bubbleStyle = useAnimatedStyle(() => ({ transform: [{ translateX: navCenter.value - 32 }] }));
-  const bubbleIconStyle = useAnimatedStyle(() => ({ opacity: iconOpacity.value }));
   const pathProps = useAnimatedProps(() => ({ d: navPath(width, navCenter.value) }));
 
   useEffect(() => {
     // Both the elevated control and its concave track use navCenter, so a jump
     // across multiple tabs still travels through every intermediate position.
-    navCenter.value = withTiming(center, { duration: 520, easing: Easing.bezier(.22, .76, .28, 1) }, (finished) => {
-      if (finished && bubbleIconIndex !== activeIndex) {
-        iconOpacity.value = 0;
-        runOnJS(setBubbleIconIndex)(activeIndex);
-      }
-    });
-  }, [activeIndex, bubbleIconIndex, center, iconOpacity, navCenter]);
-
-  useEffect(() => {
-    iconOpacity.value = withTiming(1, { duration: 150 });
-  }, [bubbleIconIndex, iconOpacity]);
+    navCenter.value = withTiming(center, { duration: 520, easing: Easing.bezier(.22, .76, .28, 1) });
+  }, [center, navCenter]);
 
   return <View style={styles.frame} onLayout={(event) => setWidth(event.nativeEvent.layout.width)}>
     <Svg pointerEvents="none" width={width} height={106} style={styles.surface}>
@@ -46,9 +34,7 @@ export function KambioBottomNav({ active = 'Resumen', onChange = () => undefined
     <View style={styles.row}>
       {items.map((item) => <NavItem key={item.key} item={item} active={active === item.key} onPress={() => onChange(item.key)} />)}
     </View>
-    <Animated.View pointerEvents="none" style={[styles.activeBubble, bubbleStyle]}>
-      <Animated.View style={bubbleIconStyle}><KambioIcon name={items[bubbleIconIndex].icon} size={23} color={COLORS.blueDeep} /></Animated.View>
-    </Animated.View>
+    <Animated.View pointerEvents="none" style={[styles.activeBubble, bubbleStyle]} />
   </View>;
 }
 
@@ -61,7 +47,14 @@ function navPath(width, center) {
 
 function NavItem({ item, active, onPress }) {
   const pressScale = useSharedValue(1);
-  const pressStyle = useAnimatedStyle(() => ({ transform: [{ scale: pressScale.value }] }));
+  const lift = useSharedValue(active ? -20 : 0);
+  const iconStyle = useAnimatedStyle(() => ({ transform: [{ translateY: lift.value }, { scale: pressScale.value }] }));
+
+  useEffect(() => {
+    lift.value = active
+      ? withDelay(330, withTiming(-20, { duration: 190, easing: Easing.out(Easing.cubic) }))
+      : withTiming(0, { duration: 150, easing: Easing.out(Easing.cubic) });
+  }, [active, lift]);
 
   return <Pressable
     accessibilityRole="tab"
@@ -71,9 +64,9 @@ function NavItem({ item, active, onPress }) {
     onPressOut={() => { pressScale.value = withSpring(1, { damping: 13, stiffness: 260 }); }}
     style={styles.item}
   >
-    {!active && <Animated.View style={[styles.regularIcon, pressStyle]}>
-      <KambioIcon name={item.icon} size={20} color="#76829E" />
-    </Animated.View>}
+    <Animated.View style={[styles.regularIcon, iconStyle]}>
+      <KambioIcon name={item.icon} size={active ? 23 : 20} color={active ? COLORS.blueDeep : '#76829E'} />
+    </Animated.View>
     <Text style={[styles.label, active && styles.labelActive]} numberOfLines={1}>{item.label}</Text>
   </Pressable>;
 }
@@ -84,12 +77,12 @@ const styles = StyleSheet.create({
     shadowColor: '#8997B6', shadowOpacity: .2, shadowRadius: 16, shadowOffset: { width: 0, height: 8 }, elevation: 8,
   },
   surface: { position: 'absolute', left: 0, top: 0 },
-  row: { flexDirection: 'row', height: 106, paddingHorizontal: 8 },
+  row: { flexDirection: 'row', height: 106, paddingHorizontal: 8, zIndex: 2 },
   item: { flex: 1, minWidth: 0, height: 106, alignItems: 'center', position: 'relative' },
   activeBubble: {
     position: 'absolute', top: 0, left: 0, width: 64, height: 64, borderRadius: 32,
     alignItems: 'center', justifyContent: 'center', backgroundColor: '#FFFFFF', borderWidth: 5, borderColor: '#F3F6FD',
-    shadowColor: '#6678A6', shadowOpacity: .2, shadowRadius: 8, shadowOffset: { width: 0, height: 4 }, elevation: 5,
+    shadowColor: '#6678A6', shadowOpacity: .2, shadowRadius: 8, shadowOffset: { width: 0, height: 4 }, elevation: 5, zIndex: 1,
   },
   regularIcon: { position: 'absolute', top: 40, width: 34, height: 25, alignItems: 'center', justifyContent: 'center' },
   label: { position: 'absolute', top: 75, color: '#6D7894', fontFamily: FONTS.button, fontSize: 10, lineHeight: 13, textAlign: 'center' },
