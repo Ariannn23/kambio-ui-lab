@@ -1,4 +1,5 @@
 import * as LocalAuthentication from 'expo-local-authentication';
+import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Image, KeyboardAvoidingView, Modal, Platform, Pressable, SafeAreaView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { AppBackground } from '../../components/AppBackground';
@@ -9,6 +10,7 @@ const pinSlots = [0, 1, 2, 3, 4, 5];
 const keypad = ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'finger-print-outline', '0', 'backspace-outline'];
 
 export default function LoginScreen() {
+  const router = useRouter();
   const [dni, setDni] = useState('');
   const [pin, setPin] = useState('');
   const [notice, setNotice] = useState('Ingresa tus datos para continuar');
@@ -42,7 +44,7 @@ export default function LoginScreen() {
 
   const submit = () => {
     if (!ready) return setNotice('Completa tu DNI y los 6 dígitos de tu clave');
-    setNotice('Datos validados. Acceso de prueba autorizado.');
+    router.replace('/ui-lab');
   };
 
   return <AppBackground>
