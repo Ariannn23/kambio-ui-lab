@@ -12,11 +12,13 @@ const items = [
   { key: 'Perfil', label: 'Perfil', icon: 'person-outline' },
 ];
 const AnimatedPath = Animated.createAnimatedComponent(Path);
+const ROW_HORIZONTAL_PADDING = 8;
 
 export function KambioBottomNav({ active = 'Resumen', onChange = () => undefined }) {
   const [width, setWidth] = useState(360);
   const activeIndex = Math.max(0, items.findIndex((item) => item.key === active));
-  const center = (width / items.length) * (activeIndex + .5);
+  const usableWidth = width - (ROW_HORIZONTAL_PADDING * 2);
+  const center = ROW_HORIZONTAL_PADDING + ((usableWidth / items.length) * (activeIndex + .5));
   const navCenter = useSharedValue(center);
   const bubbleStyle = useAnimatedStyle(() => ({ transform: [{ translateX: navCenter.value - 32 }] }));
   const pathProps = useAnimatedProps(() => ({ d: navPath(width, navCenter.value) }));
@@ -52,7 +54,7 @@ function NavItem({ item, active, onPress }) {
 
   useEffect(() => {
     lift.value = active
-      ? withDelay(330, withTiming(-20, { duration: 190, easing: Easing.out(Easing.cubic) }))
+      ? withDelay(210, withTiming(-20, { duration: 155, easing: Easing.out(Easing.cubic) }))
       : withTiming(0, { duration: 150, easing: Easing.out(Easing.cubic) });
   }, [active, lift]);
 
@@ -77,7 +79,7 @@ const styles = StyleSheet.create({
     shadowColor: '#8997B6', shadowOpacity: .2, shadowRadius: 16, shadowOffset: { width: 0, height: 8 }, elevation: 8,
   },
   surface: { position: 'absolute', left: 0, top: 0 },
-  row: { flexDirection: 'row', height: 106, paddingHorizontal: 8, zIndex: 2 },
+  row: { flexDirection: 'row', height: 106, paddingHorizontal: ROW_HORIZONTAL_PADDING, zIndex: 2 },
   item: { flex: 1, minWidth: 0, height: 106, alignItems: 'center', position: 'relative' },
   activeBubble: {
     position: 'absolute', top: 0, left: 0, width: 64, height: 64, borderRadius: 32,
